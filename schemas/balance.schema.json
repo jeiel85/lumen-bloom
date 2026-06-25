@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/lumen-bloom/balance.schema.json",
+  "title": "Lumen Bloom Balance Config",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "simulation",
+    "movement",
+    "relationship",
+    "absorption",
+    "damage",
+    "camera",
+    "blob",
+    "world",
+    "progression"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "const": 1
+    },
+    "simulation": {
+      "type": "object"
+    },
+    "movement": {
+      "type": "object"
+    },
+    "relationship": {
+      "type": "object"
+    },
+    "absorption": {
+      "type": "object"
+    },
+    "damage": {
+      "type": "object"
+    },
+    "camera": {
+      "type": "object"
+    },
+    "blob": {
+      "type": "object"
+    },
+    "world": {
+      "type": "object"
+    },
+    "progression": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": false
+}

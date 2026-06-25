@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "stages": [
+    {
+      "id": "light-dust",
+      "index": 0,
+      "nameKo": "빛가루",
+      "nameEn": "Light Dust",
+      "background": "void-dust",
+      "audioStem": [
+        "base"
+      ],
+      "threatBudget": 0.22
+    },
+    {
+      "id": "droplet",
+      "index": 1,
+      "nameKo": "물방울",
+      "nameEn": "Droplet",
+      "background": "deep-water",
+      "audioStem": [
+        "base",
+        "glass"
+      ],
+      "threatBudget": 0.25
+    },
+    {
+      "id": "ripple",
+      "index": 2,
+      "nameKo": "물결",
+      "nameEn": "Ripple",
+      "background": "flow-lines",
+      "audioStem": [
+        "base",
+        "pulse"
+      ],
+      "threatBudget": 0.27
+    },
+    {
+      "id": "moon-lake",
+      "index": 3,
+      "nameKo": "달빛 호수",
+      "nameEn": "Moonlit Lake",
+      "background": "moon-lake",
+      "audioStem": [
+        "base",
+        "warm-pad"
+      ],
+      "threatBudget": 0.29
+    },
+    {
+      "id": "star",
+      "index": 4,
+      "nameKo": "별",
+      "nameEn": "Star",
+      "background": "stellar",
+      "audioStem": [
+        "base",
+        "shimmer"
+      ],
+      "threatBudget": 0.3
+    },
+    {
+      "id": "nebula",
+      "index": 5,
+      "nameKo": "성운",
+      "nameEn": "Nebula",
+      "background": "nebula",
+      "audioStem": [
+        "base",
+        "shimmer",
+        "stereo-pad"
+      ],
+      "threatBudget": 0.32
+    },
+    {
+      "id": "galaxy",
+      "index": 6,
+      "nameKo": "은하",
+      "nameEn": "Galaxy",
+      "background": "galaxy",
+      "audioStem": [
+        "base",
+        "low",
+        "shimmer"
+      ],
+      "threatBudget": 0.34
+    },
+    {
+      "id": "cosmic-web",
+      "index": 7,
+      "nameKo": "우주망",
+      "nameEn": "Cosmic Web",
+      "background": "cosmic-web",
+      "audioStem": [
+        "base",
+        "low",
+        "generative"
+      ],
+      "threatBudget": 0.35
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "archetypes": [
+    {
+      "id": "drifter",
+      "minStage": 0,
+      "evaluationHz": 6,
+      "speedFraction": 0.45,
+      "states": [
+        "wander",
+        "flee",
+        "pursue"
+      ]
+    },
+    {
+      "id": "hunter",
+      "minStage": 2,
+      "evaluationHz": 10,
+      "speedFraction": 0.62,
+      "states": [
+        "wander",
+        "telegraph",
+        "pursue",
+        "recover"
+      ]
+    },
+    {
+      "id": "orbiter",
+      "minStage": 2,
+      "evaluationHz": 6,
+      "speedFraction": 0.48,
+      "states": [
+        "seek-anchor",
+        "orbit",
+        "flee",
+        "pursue"
+      ]
+    },
+    {
+      "id": "splitter",
+      "minStage": 3,
+      "evaluationHz": 5,
+      "speedFraction": 0.4,
+      "states": [
+        "wander",
+        "flee",
+        "pursue",
+        "split"
+      ]
+    },
+    {
+      "id": "gravity-well",
+      "minStage": 5,
+      "evaluationHz": 4,
+      "speedFraction": 0.1,
+      "states": [
+        "drift",
+        "field-active"
+      ]
+    }
+  ]
+}

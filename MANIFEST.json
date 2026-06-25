@@ -1,0 +1,197 @@
+[
+  {
+    "path": ".gitattributes",
+    "bytes": 168,
+    "sha256": "496534443fcca60e43812a7c446691317bb20fe2542731567eb2fe5c37d76191"
+  },
+  {
+    "path": ".gitignore",
+    "bytes": 117,
+    "sha256": "5af0d6a3a3ea7946fed381de2ce1f4acdf8698a8e42e479bd04455bf1dc33027"
+  },
+  {
+    "path": "adr/ADR-001_STACK.md",
+    "bytes": 972,
+    "sha256": "efea694d66d0afa9c0719ecdf3032b5b7563de88e26e9c3f121cb5a84a22dc87"
+  },
+  {
+    "path": "adr/ADR-002_FIXED_TIMESTEP.md",
+    "bytes": 477,
+    "sha256": "7e48f9555dec4d7ade7523a66b52771f4f84eb7bc7ac1957790c6b2635037034"
+  },
+  {
+    "path": "adr/ADR-003_LOCAL_ONLY.md",
+    "bytes": 497,
+    "sha256": "ba719303e5cfb52690303b8e0a65e03ab2b6fcae51dc13eaf725f574268f6a5e"
+  },
+  {
+    "path": "AGENTS.md",
+    "bytes": 3149,
+    "sha256": "6cde7a7dd87103e33be6f4c197b9be3ecdc0e68bea6418381bfdddd5d4bb968f"
+  },
+  {
+    "path": "config/balance.config.json",
+    "bytes": 1700,
+    "sha256": "2f92949f51f7efab859d0848460bb70cc438ef467f0461a8de4ff73c774bb09a"
+  },
+  {
+    "path": "config/enemies.config.json",
+    "bytes": 1043,
+    "sha256": "681e47f29c84da25028234765f49eff4c5bf63796f19b4186f9896f64b2a314b"
+  },
+  {
+    "path": "config/stages.config.json",
+    "bytes": 1938,
+    "sha256": "899ba4209bfe86ab261cfaecee5035e3403788097fe49d300bb3dc05f291f62b"
+  },
+  {
+    "path": "docs/01_PRODUCT_REQUIREMENTS.md",
+    "bytes": 5396,
+    "sha256": "32d0d918aaaa9ee68eef97c2991fbd995aa708a2d57bf7c516d3fdc648f82bbe"
+  },
+  {
+    "path": "docs/02_GAME_DESIGN_DOCUMENT.md",
+    "bytes": 6430,
+    "sha256": "0465c662ab2ec194714e7ab990f192b709c5476af159351228b1d7d1af115d19"
+  },
+  {
+    "path": "docs/03_TECHNICAL_ARCHITECTURE.md",
+    "bytes": 6475,
+    "sha256": "17836960e82079e86d5aa888bda73a346b411d4cebfe7a53d612fbb5674e683f"
+  },
+  {
+    "path": "docs/04_CORE_MECHANICS.md",
+    "bytes": 5086,
+    "sha256": "6dfb03fc9d0d5cf6eaaeb4e34aedc727353f41afc3aaa7414dcbc847091a532b"
+  },
+  {
+    "path": "docs/05_CAMERA_AND_BLOB.md",
+    "bytes": 4539,
+    "sha256": "4185404bcb8f7ac7fd84cd2ee29acf74201349ba1fcd7b8ff5f652dc42f7fce5"
+  },
+  {
+    "path": "docs/06_WORLD_AND_AI.md",
+    "bytes": 4423,
+    "sha256": "5648e0beb027c087ed3dce3afe65805bb29d1d5686cb60b50f6ac122fb6a7843"
+  },
+  {
+    "path": "docs/07_PROGRESSION_AND_ECONOMY.md",
+    "bytes": 3330,
+    "sha256": "a88dbcc12c473468ac322948f1b23accbf584385df4d6e35a2d545fb1e14b182"
+  },
+  {
+    "path": "docs/08_UI_AUDIO_ART.md",
+    "bytes": 4149,
+    "sha256": "ffaca4ae24b53b15b944cc770891475d143d2cb64980739a5cc14b7d58d3faa1"
+  },
+  {
+    "path": "docs/09_SAVE_AND_DATA.md",
+    "bytes": 3689,
+    "sha256": "07698a5f7fc3393fb0485e9e9ff53c3baefeeb88ba1f4b45030316b5bdbe0af0"
+  },
+  {
+    "path": "docs/10_TESTING_AND_PERFORMANCE.md",
+    "bytes": 4049,
+    "sha256": "536c28751d09596c7a7252f66148f6f40ed1c785a0b8a641655205642a8684c9"
+  },
+  {
+    "path": "docs/11_SECURITY_PRIVACY_RELEASE.md",
+    "bytes": 3590,
+    "sha256": "0702998ee79f72c0514debacfd38ee3d4c05b0a156833a254207f658ac096f26"
+  },
+  {
+    "path": "docs/12_IMPLEMENTATION_CONTRACTS.md",
+    "bytes": 4899,
+    "sha256": "54d2b8e199b5799f0e76765a47bdce6954d368ec51b8aab1207095c67ea7aa56"
+  },
+  {
+    "path": "docs/13_CLEAN_ROOM_AND_LICENSE.md",
+    "bytes": 3488,
+    "sha256": "a03f0b77a66e6d07a87ba979d3599ab9dbe8cb79c08f170c77af45ad7c48e25b"
+  },
+  {
+    "path": "docs/14_RELEASE_CHECKLIST.md",
+    "bytes": 3078,
+    "sha256": "dcef7680e1b0eeaae75f214fe16a953b186b09d52eef2832b8177dd6166282b9"
+  },
+  {
+    "path": "goals/GOAL_01_FOUNDATION.md",
+    "bytes": 1091,
+    "sha256": "26389bd03114b98f3fa17b13f73c7f8f6d447d28075f5906b5a85fe11c5052c3"
+  },
+  {
+    "path": "goals/GOAL_02_LOOP_INPUT_CAMERA.md",
+    "bytes": 881,
+    "sha256": "477f33e4ec6c0e32d30cf692159348b876381dab6cbd68409d26afe6931d9392"
+  },
+  {
+    "path": "goals/GOAL_03_GROWTH_AND_BLOB.md",
+    "bytes": 836,
+    "sha256": "20b64859cb6bb06236476a33ed984f0e973269295bb003cc7b1cf8f0f0eb131d"
+  },
+  {
+    "path": "goals/GOAL_04_CAMERA_EXPANSION.md",
+    "bytes": 733,
+    "sha256": "4cd446274ae1de502ca6aa278c63665fe4b87e421be32d15cc0f1e9da3a9dc3b"
+  },
+  {
+    "path": "goals/GOAL_05_WORLD_AND_ENEMIES.md",
+    "bytes": 737,
+    "sha256": "a43abd3c451a85a8a0ee80f76421e9cd8f094a656b20405fee690c4c7f6dac0b"
+  },
+  {
+    "path": "goals/GOAL_06_PROGRESSION_SAVE.md",
+    "bytes": 758,
+    "sha256": "a7fabad0cc163c62b7205141640fcbd442e2890832c92ee392d750f040cd28d2"
+  },
+  {
+    "path": "goals/GOAL_07_UI_ACCESSIBILITY_AUDIO.md",
+    "bytes": 673,
+    "sha256": "a0bbf6cc12d140efc70abd0b5d48369475a12cdb7941895c1ab769444aa4cc7d"
+  },
+  {
+    "path": "goals/GOAL_08_PWA_PERFORMANCE.md",
+    "bytes": 659,
+    "sha256": "64fe6189d927db5496051dffa1dbddc0ad8bed885632ba8e9dec59192115782b"
+  },
+  {
+    "path": "goals/GOAL_09_CONTENT_POLISH.md",
+    "bytes": 740,
+    "sha256": "006477e7fa241a41e07aaa613dce6d6826654f70d80fbc9a67f70710c767b507"
+  },
+  {
+    "path": "goals/GOAL_10_RELEASE.md",
+    "bytes": 638,
+    "sha256": "d316c94abdfae68df5e143458666ba1482f8d0d8e4d2a937d1c0e11142423787"
+  },
+  {
+    "path": "LICENSE",
+    "bytes": 711,
+    "sha256": "6f1eee59aa455302e3d8d0fefb00ee651527793a6acbd822e3464d11ab5fc135"
+  },
+  {
+    "path": "README.md",
+    "bytes": 4125,
+    "sha256": "7fea115b64e97f135101f59a670a63273e0635d7ac1de5412ae5ca0c349843ad"
+  },
+  {
+    "path": "schemas/balance.schema.json",
+    "bytes": 937,
+    "sha256": "421539d4010ed1a24924b9e2b6d40e569429dbfaa87af9b0605d7fefc5c375cb"
+  },
+  {
+    "path": "schemas/save.schema.json",
+    "bytes": 2228,
+    "sha256": "87ac5792a17180818b293e592e2a145ebe6d7794e2be01ab54cfc0d8e123e211"
+  },
+  {
+    "path": "SOURCES.md",
+    "bytes": 1791,
+    "sha256": "d3ea5a7fd43f7fa91b9a29fcb6ebc63c76609af48b41520f7e323bf97078f481"
+  },
+  {
+    "path": "THIRD_PARTY_NOTICES.md",
+    "bytes": 523,
+    "sha256": "4157047b3ba620e193fa2330b12a00c6fd3def00a4788803b58354d7a2c2d43a"
+  }
+]

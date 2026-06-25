@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/lumen-bloom/save.schema.json",
+  "title": "Lumen Bloom Save Envelope",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "contentVersion",
+    "revision",
+    "writtenAt",
+    "payload",
+    "checksum"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "contentVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "writtenAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "checksum": {
+      "type": "string",
+      "minLength": 8
+    },
+    "payload": {
+      "type": "object",
+      "required": [
+        "profileId",
+        "createdAt",
+        "updatedAt",
+        "currency",
+        "progression",
+        "unlocks",
+        "equipment",
+        "tutorial",
+        "statistics"
+      ],
+      "properties": {
+        "profileId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "currency": {
+          "type": "object",
+          "required": [
+            "memoryShards",
+            "lifetimeEarned",
+            "lifetimeSpent"
+          ],
+          "properties": {
+            "memoryShards": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "lifetimeEarned": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "lifetimeSpent": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "additionalProperties": false
+        },
+        "progression": {
+          "type": "object"
+        },
+        "unlocks": {
+          "type": "object"
+        },
+        "equipment": {
+          "type": "object"
+        },
+        "tutorial": {
+          "type": "object"
+        },
+        "statistics": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

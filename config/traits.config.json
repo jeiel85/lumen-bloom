@@ -1,0 +1,18 @@
+[
+  {
+    "id": "magnet-pulse",
+    "nameKo": "자력 펄스",
+    "nameEn": "Magnet Pulse",
+    "descriptionKo": "흡수 범위가 20% 증가하지만 속도가 10% 감소합니다.",
+    "descriptionEn": "Absorption range increased by 20%, but speed reduced by 10%.",
+    "cost": 5
+  },
+  {
+    "id": "kinetic-shimmer",
+    "nameKo": "운동 에너지 미광",
+    "nameEn": "Kinetic Shimmer",
+    "descriptionKo": "이동 속도가 15% 증가하지만 대미지를 입었을 때 잃는 질량이 25% 늘어납니다.",
+    "descriptionEn": "Movement speed increased by 15%, but mass lost on damage increased by 25%.",
+    "cost": 8
+  }
+]

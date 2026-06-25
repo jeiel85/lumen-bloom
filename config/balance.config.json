@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "simulation": {
+    "fixedHz": 60,
+    "maxFrameDeltaSeconds": 0.1,
+    "maxStepsPerFrame": 5
+  },
+  "movement": {
+    "maxScreenSpeed": 260,
+    "accelerationResponseSeconds": 0.35,
+    "coastToTenPercentSeconds": 0.8,
+    "cameraLookAheadFraction": 0.06
+  },
+  "relationship": {
+    "edibleEnterRatio": 0.9,
+    "edibleExitRatio": 0.94,
+    "threatEnterRatio": 1.12,
+    "threatExitRatio": 1.07
+  },
+  "absorption": {
+    "magnetRadiusMultiplier": 1.85,
+    "commonEfficiency": 0.85,
+    "creatureEfficiency": 0.7,
+    "fragmentEfficiency": 0.55,
+    "growthResponse": 6.0,
+    "mergeDurationMin": 0.18,
+    "mergeDurationMax": 0.42
+  },
+  "damage": {
+    "massFraction": 0.18,
+    "invulnerabilitySeconds": 0.75,
+    "recoverableMassMinFraction": 0.3,
+    "recoverableMassMaxFraction": 0.45
+  },
+  "camera": {
+    "targetScreenFraction": 0.055,
+    "triggerScreenFraction": 0.078,
+    "deathScreenFraction": 0.016,
+    "springStiffness": 42,
+    "springDamping": 13,
+    "transitionMaxSeconds": 1.1,
+    "retriggerCooldownSeconds": 0.15
+  },
+  "blob": {
+    "pointsLow": 16,
+    "pointsMedium": 20,
+    "pointsHigh": 24,
+    "spring": 58,
+    "damping": 10.5,
+    "neighborTension": 24,
+    "minOffset": -0.07,
+    "maxOffset": 0.09
+  },
+  "world": {
+    "prewarmRadiusMultiplier": 1.25,
+    "cullRadiusMultiplier": 1.65,
+    "spawnInnerMultiplier": 0.9,
+    "spawnOuterMultiplier": 1.3,
+    "originRebaseThreshold": 1000000,
+    "maxParticlesLow": 320,
+    "maxParticlesHigh": 700
+  },
+  "progression": {
+    "voluntaryEfficiency": 1.0,
+    "deathEfficiency": 0.65,
+    "difficultyMultiplier": {
+      "calm": 0.8,
+      "standard": 1.0,
+      "abyss": 1.35
+    }
+  }
+}
