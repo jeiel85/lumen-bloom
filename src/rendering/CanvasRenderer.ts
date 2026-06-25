@@ -1,5 +1,7 @@
 import type { Vec2 } from "../domain/math/Vec2";
 import { CameraTransform } from "./CameraTransform";
+import { BlobRenderer } from "./BlobRenderer";
+import type { Mote } from "../domain/entities/Mote";
 
 export interface RenderSnapshot {
   alpha: number;
@@ -8,11 +10,13 @@ export interface RenderSnapshot {
   player?: {
     position: Vec2;
     mass: number;
+    blobPoints: readonly Vec2[];
   };
   camera?: {
     position: Vec2;
     zoom: number;
   };
+  motes?: readonly Mote[];
 }
 
 export class CanvasRenderer {
@@ -22,6 +26,7 @@ export class CanvasRenderer {
   private height: number = 0;
   private dpr: number = 1;
   private quality: "low" | "medium" | "high" = "medium";
+  private blobRenderer: BlobRenderer;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -30,6 +35,7 @@ export class CanvasRenderer {
       throw new Error("Could not get 2D context");
     }
     this.ctx = context;
+    this.blobRenderer = new BlobRenderer();
   }
 
   public getDpr(): number {
@@ -81,7 +87,7 @@ export class CanvasRenderer {
       ctx.save();
       ctx.globalCompositeOperation = "screen";
       const glowGrad = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, 250);
-      glowGrad.addColorStop(0, "hsla(180, 100%, 65%, 0.06)");
+      glowGrad.addColorStop(0, "hsla(180, 100%, 65%, 0.05)");
       glowGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
       ctx.fillStyle = glowGrad;
       ctx.beginPath();
@@ -90,60 +96,109 @@ export class CanvasRenderer {
       ctx.restore();
     }
 
-    // 4. Render Player if active in game
-    if (snapshot.player && snapshot.camera) {
-      ctx.save();
+    // 4. Render Active Motes (Food particles)
+    if (snapshot.motes && snapshot.camera) {
+      const zoom = snapshot.camera.zoom;
+      const cameraPos = snapshot.camera.position;
       
-      // Calculate screen coordinate for player
-      const screenPos = CameraTransform.worldToScreen(
+      ctx.save();
+      for (const mote of snapshot.motes) {
+        if (mote.state === "consumed") continue;
+
+        const screenPos = CameraTransform.worldToScreen(mote.position, cameraPos, zoom, w, h);
+        const radius = Math.sqrt(mote.mass) * 3 * zoom;
+
+        // Basic boundary cull check
+        if (
+          screenPos.x < -radius * 2 ||
+          screenPos.x > w + radius * 2 ||
+          screenPos.y < -radius * 2 ||
+          screenPos.y > h + radius * 2
+        ) {
+          continue;
+        }
+
+        // Draw mote particle with distinct states styling
+        if (mote.state === "magnetized") {
+          // Draw a small tail pointing away from player direction
+          if (this.quality !== "low" && snapshot.player) {
+            const playerScreenPos = CameraTransform.worldToScreen(snapshot.player.position, cameraPos, zoom, w, h);
+            const dx = playerScreenPos.x - screenPos.x;
+            const dy = playerScreenPos.y - screenPos.y;
+            const len = Math.sqrt(dx * dx + dy * dy);
+            if (len > 0) {
+              const tailX = screenPos.x - (dx / len) * radius * 3.5;
+              const tailY = screenPos.y - (dy / len) * radius * 3.5;
+              
+              const tailGrad = ctx.createLinearGradient(screenPos.x, screenPos.y, tailX, tailY);
+              tailGrad.addColorStop(0, "hsla(180, 100%, 75%, 0.8)");
+              tailGrad.addColorStop(1, "hsla(180, 100%, 55%, 0.0)");
+              
+              ctx.strokeStyle = tailGrad;
+              ctx.lineWidth = radius * 1.5;
+              ctx.lineCap = "round";
+              ctx.beginPath();
+              ctx.moveTo(screenPos.x, screenPos.y);
+              ctx.lineTo(tailX, tailY);
+              ctx.stroke();
+            }
+          }
+        }
+
+        ctx.beginPath();
+        ctx.arc(screenPos.x, screenPos.y, radius, 0, Math.PI * 2);
+        
+        const moteGrad = ctx.createRadialGradient(
+          screenPos.x,
+          screenPos.y,
+          0,
+          screenPos.x,
+          screenPos.y,
+          radius
+        );
+
+        if (mote.state === "merging") {
+          // Fade and blend orange as it merges
+          const alphaFade = 1.0 - Math.min(mote.mergeElapsed / mote.mergeDuration, 1.0);
+          ctx.globalAlpha = alphaFade;
+          moteGrad.addColorStop(0, "hsl(50, 100%, 95%)");
+          moteGrad.addColorStop(0.3, "hsl(40, 100%, 75%)");
+          moteGrad.addColorStop(1, "rgba(255, 100, 0, 0)");
+        } else {
+          // Standard idle/magnetized white-cyan neon light
+          ctx.globalAlpha = 1.0;
+          if (this.quality !== "low") {
+            ctx.shadowBlur = this.quality === "high" ? 10 : 5;
+            ctx.shadowColor = "hsl(180, 100%, 75%)";
+          }
+          moteGrad.addColorStop(0, "hsl(0, 0%, 100%)");
+          moteGrad.addColorStop(0.4, "hsl(180, 100%, 90%)");
+          moteGrad.addColorStop(1, "hsla(180, 100%, 65%, 0.1)");
+        }
+
+        ctx.fillStyle = moteGrad;
+        ctx.fill();
+        ctx.shadowBlur = 0; // Reset
+        ctx.globalAlpha = 1.0; // Reset
+      }
+      ctx.restore();
+    }
+
+    // 5. Render Organic Player Deformed Blob
+    if (snapshot.player && snapshot.camera) {
+      this.blobRenderer.draw(
+        ctx,
+        snapshot.player.blobPoints,
         snapshot.player.position,
         snapshot.camera.position,
         snapshot.camera.zoom,
         w,
-        h
+        h,
+        this.quality
       );
-
-      // Mass-based radius calculation: radius = sqrt(mass) * scaleFactor
-      const radius = Math.sqrt(snapshot.player.mass) * 8 * snapshot.camera.zoom;
-
-      // Glow effect under player
-      if (this.quality !== "low") {
-        ctx.shadowBlur = this.quality === "high" ? 25 : 12;
-        ctx.shadowColor = "hsl(180, 100%, 65%)";
-      }
-
-      // Draw aesthetic outer halo ring
-      if (this.quality === "high") {
-        ctx.strokeStyle = "hsla(180, 100%, 75%, 0.25)";
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(screenPos.x, screenPos.y, radius + 6, 0, Math.PI * 2);
-        ctx.stroke();
-      }
-
-      // Fill player light blob
-      const playerGlow = ctx.createRadialGradient(
-        screenPos.x,
-        screenPos.y,
-        0,
-        screenPos.x,
-        screenPos.y,
-        radius
-      );
-      playerGlow.addColorStop(0, "hsl(0, 0%, 100%)");
-      playerGlow.addColorStop(0.3, "hsl(180, 100%, 85%)");
-      playerGlow.addColorStop(1, "hsla(180, 100%, 60%, 0.15)");
-      
-      ctx.fillStyle = playerGlow;
-      ctx.beginPath();
-      ctx.arc(screenPos.x, screenPos.y, radius, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.restore();
     }
 
-    // 5. Draw stage ambient texts (rendered in world space or centered on screen depending on layout)
-    // For Goal 01/02 we center it in CSS pixels on screen with a light ambient touch
+    // 6. Draw stage ambient texts
     ctx.save();
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";

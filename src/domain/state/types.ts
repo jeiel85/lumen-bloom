@@ -1,5 +1,6 @@
 import type { Vec2 } from "../math/Vec2";
 import type { GameConfig } from "../../config/types";
+import type { Mote } from "../entities/Mote";
 
 export interface RandomSource {
   next(): number;
@@ -46,9 +47,9 @@ export interface StageState {
   stageProgress: number; // 0 to 1
 }
 
-// Simple stores placeholders for Goal 02
 export interface EntityStore {
   activeCount: number;
+  motes: Mote[];
 }
 
 export interface ParticleStore {
@@ -60,8 +61,17 @@ export interface RunStats {
   memoryShardsEarned: number;
 }
 
+export type DomainEvent =
+  | { type: "absorption-started"; sourceId: number; ratio: number }
+  | { type: "absorption-committed"; sourceId: number; gainedMass: number; angle: number }
+  | { type: "player-damaged"; sourceId: number; lostMass: number; angle: number }
+  | { type: "near-miss"; sourceId: number; distanceRatio: number }
+  | { type: "expansion-started"; from: number; to: number }
+  | { type: "expansion-completed"; stageIndex: number }
+  | { type: "run-settled"; reward: number; reason: "voluntary" | "death" };
+
 export interface DomainEventBuffer {
-  events: unknown[];
+  events: DomainEvent[];
 }
 
 export interface GameState {

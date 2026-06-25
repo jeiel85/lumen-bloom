@@ -4,8 +4,13 @@ import { DebugOverlay } from "../diagnostics/DebugOverlay";
 import { InputManager } from "../input/InputManager";
 import { MovementSystem } from "../domain/systems/MovementSystem";
 import { CameraSystem } from "../domain/systems/CameraSystem";
+import { AbsorptionSystem } from "../domain/systems/AbsorptionSystem";
+import { GrowthSystem } from "../domain/systems/GrowthSystem";
+import { BlobSystem } from "../domain/systems/BlobSystem";
 import { MulberryRandom } from "../domain/math/Random";
 import { ReplayFixture } from "../diagnostics/ReplayFixture";
+import { MotePool } from "../domain/entities/Mote";
+import { AudioManager } from "../audio/AudioManager";
 import type { GameState, UpdateContext, InputSnapshot } from "../domain/state/types";
 import { Vec2 } from "../domain/math/Vec2";
 
@@ -15,11 +20,17 @@ export class GameApp {
   private renderer: CanvasRenderer;
   private debugOverlay: DebugOverlay;
   private inputManager: InputManager;
+  private audioManager: AudioManager;
 
   // Domain systems
   private movementSystem: MovementSystem;
   private cameraSystem: CameraSystem;
+  private absorptionSystem: AbsorptionSystem;
+  private growthSystem: GrowthSystem;
+  private blobSystem: BlobSystem;
+  
   private rng: MulberryRandom;
+  private motePool: MotePool;
 
   // Main Loop stats
   private previousMs: number = 0;
@@ -51,10 +62,16 @@ export class GameApp {
     this.renderer = new CanvasRenderer(this.canvas);
     this.debugOverlay = new DebugOverlay();
     this.inputManager = new InputManager();
+    this.audioManager = new AudioManager();
 
     this.movementSystem = new MovementSystem();
     this.cameraSystem = new CameraSystem();
+    this.absorptionSystem = new AbsorptionSystem();
+    this.growthSystem = new GrowthSystem();
+    this.blobSystem = new BlobSystem();
+
     this.rng = new MulberryRandom(12345); // Seeded RNG
+    this.motePool = new MotePool(200);
     this.replayFixture = new ReplayFixture();
 
     this.resetGameState();
@@ -65,6 +82,7 @@ export class GameApp {
   }
 
   private resetGameState(): void {
+    this.motePool.clear();
     this.gameState = {
       tick: 0,
       elapsedSeconds: 0,
@@ -73,8 +91,8 @@ export class GameApp {
         position: Vec2.create(0, 0),
         previousPosition: Vec2.create(0, 0),
         velocity: Vec2.create(0, 0),
-        currentMass: 10,
-        targetMass: 10,
+        currentMass: 15, // slightly larger base start
+        targetMass: 15,
         invulnerabilitySeconds: 0,
         blob: { points: [], velocities: [] },
         equippedTraitId: null
@@ -99,7 +117,10 @@ export class GameApp {
         currentStageId: this.config.stages[0]?.id || "light-dust",
         stageProgress: 0
       },
-      entities: { activeCount: 0 },
+      entities: {
+        activeCount: 0,
+        motes: []
+      },
       particles: { activeCount: 0 },
       run: { elapsedSeconds: 0, memoryShardsEarned: 0 },
       events: { events: [] }
@@ -114,7 +135,10 @@ export class GameApp {
     const selectDifficulty = document.getElementById("select-difficulty") as HTMLSelectElement | null;
     const selectQuality = document.getElementById("select-quality") as HTMLSelectElement | null;
 
-    btnStart?.addEventListener("click", () => this.startGame());
+    btnStart?.addEventListener("click", () => {
+      this.audioManager.init(); // Activate Web Audio Context on click gesture
+      this.startGame();
+    });
     btnSettings?.addEventListener("click", () => this.switchScreen("settings"));
     btnSettingsBack?.addEventListener("click", () => this.switchScreen("menu"));
     
@@ -146,14 +170,12 @@ export class GameApp {
   }
 
   private setupVisibilityChange(): void {
-    // Reset timer accumulator on visibility resume to avoid framerate spiral of death/jump
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) {
         if (this.isRunning) {
           this.pauseGame();
         }
       } else {
-        // Tab resumed
         this.previousMs = performance.now();
         this.accumulator = 0;
       }
@@ -204,6 +226,23 @@ export class GameApp {
     this.resetGameState();
     this.switchScreen("game");
     this.droppedSteps = 0;
+
+    // Spawn initial seeded motes
+    const testRng = new MulberryRandom(98765);
+    const count = 35;
+    for (let i = 0; i < count; i++) {
+      // Spawn in a radius around center
+      const r = testRng.range(80, 700);
+      const theta = testRng.range(0, Math.PI * 2);
+      const mx = r * Math.cos(theta);
+      const my = r * Math.sin(theta);
+      const mass = testRng.range(1.2, 4.0);
+      
+      const mote = this.motePool.spawn(mx, my, mass);
+      this.gameState.entities.motes.push(mote);
+    }
+    this.gameState.entities.activeCount = count;
+
     this.previousMs = performance.now();
     this.accumulator = 0;
     this.isRunning = true;
@@ -250,10 +289,8 @@ export class GameApp {
 
     let steps = 0;
     while (this.accumulator >= STEP && steps < MAX_STEPS_PER_FRAME) {
-      // 1. Query input snapshot
       const inputSnapshot = this.inputManager.getSnapshot();
       
-      // Record if playing active game
       if (!this.isReplaying) {
         this.replayFixture.record(this.gameState.tick, inputSnapshot);
       }
@@ -265,12 +302,9 @@ export class GameApp {
         gameplayRandom: this.rng
       };
 
-      // 2. Perform fixed physics simulation step
       this.updateSimulation(context);
 
-      // Reset edge-triggered one-shot buttons
       this.inputManager.resetOneShots();
-
       this.accumulator -= STEP;
       steps += 1;
     }
@@ -284,10 +318,11 @@ export class GameApp {
     this.render(alpha);
 
     // Update diagnostic stats panel
+    const activeMotes = this.gameState.entities.motes.filter(m => m.state !== "consumed").length;
     const fps = Math.round(1 / (frameDelta || 0.016));
     this.debugOverlay.update({
       fps,
-      entities: this.gameState.entities.activeCount,
+      entities: activeMotes + 1, // motes + player
       droppedSteps: this.droppedSteps
     });
 
@@ -298,9 +333,22 @@ export class GameApp {
     this.gameState.tick++;
     this.gameState.elapsedSeconds += context.dt;
 
-    // Run movement and camera spring physics systems
+    // Run movement and camera spring systems
     this.movementSystem.update(this.gameState, context);
     this.cameraSystem.update(this.gameState, context);
+
+    // Run new Growth & Blob perimeter springs
+    this.absorptionSystem.update(this.gameState, context);
+    this.growthSystem.update(this.gameState, context);
+    this.blobSystem.update(this.gameState, context);
+
+    // Process collected domain events for Audio playback
+    if (this.gameState.events.events.length > 0) {
+      for (const event of this.gameState.events.events) {
+        this.audioManager.handleEvent(event);
+      }
+      this.gameState.events.events = [];
+    }
 
     // Sync HTML HUD text labels
     const hudMass = document.getElementById("hud-mass-value");
@@ -319,6 +367,24 @@ export class GameApp {
     const playerPos = Vec2.lerp(this.gameState.player.previousPosition, this.gameState.player.position, alpha);
     const cameraPos = Vec2.lerp(this.gameState.camera.previousPosition, this.gameState.camera.position, alpha);
 
+    // Interpolate blob perimeter points
+    const interpBlobPoints: Vec2[] = [];
+    const pointsCount = this.gameState.player.blob.points.length;
+    if (pointsCount > 0) {
+      // Since previous positions aren't directly held in array to avoid massive garbage collection,
+      // we project dynamic points relative to interpolated playerPos using current offsets
+      // (This matches base simulation physics and interpolates center position smoothly)
+      for (let i = 0; i < pointsCount; i++) {
+        const pt = this.gameState.player.blob.points[i]!;
+        const dx = pt.x - this.gameState.player.position.x;
+        const dy = pt.y - this.gameState.player.position.y;
+        interpBlobPoints.push({
+          x: playerPos.x + dx,
+          y: playerPos.y + dy
+        });
+      }
+    }
+
     const activeStage = this.config.stages[this.gameState.stage.currentStageIndex];
 
     this.renderer.render({
@@ -327,12 +393,14 @@ export class GameApp {
       stageNameEn: activeStage?.nameEn || "Light Dust",
       player: {
         position: playerPos,
-        mass: this.gameState.player.currentMass
+        mass: this.gameState.player.currentMass,
+        blobPoints: interpBlobPoints
       },
       camera: {
         position: cameraPos,
         zoom: this.gameState.camera.zoom
-      }
+      },
+      motes: this.gameState.entities.motes
     });
   }
 
