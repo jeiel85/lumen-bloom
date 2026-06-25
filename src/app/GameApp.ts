@@ -1,35 +1,43 @@
 import type { GameConfig } from "../config/types";
 import { CanvasRenderer } from "../rendering/CanvasRenderer";
 import { DebugOverlay } from "../diagnostics/DebugOverlay";
+import { InputManager } from "../input/InputManager";
+import { MovementSystem } from "../domain/systems/MovementSystem";
+import { CameraSystem } from "../domain/systems/CameraSystem";
+import { MulberryRandom } from "../domain/math/Random";
+import { ReplayFixture } from "../diagnostics/ReplayFixture";
+import type { GameState, UpdateContext, InputSnapshot } from "../domain/state/types";
+import { Vec2 } from "../domain/math/Vec2";
 
 export class GameApp {
   private config: GameConfig;
   private canvas: HTMLCanvasElement;
   private renderer: CanvasRenderer;
   private debugOverlay: DebugOverlay;
+  private inputManager: InputManager;
+
+  // Domain systems
+  private movementSystem: MovementSystem;
+  private cameraSystem: CameraSystem;
+  private rng: MulberryRandom;
 
   // Main Loop stats
   private previousMs: number = 0;
   private accumulator: number = 0;
   private isRunning: boolean = false;
   private animationFrameId: number | null = null;
-  
-  // Game states (Goal 01 simple state)
-  private tickCount: number = 0;
-  private entityCount: number = 0;
   private droppedSteps: number = 0;
 
-  // UI state
+  // Transient authoritative game state
+  private gameState!: GameState;
+
+  // Replay & diagnostics
+  private replayFixture: ReplayFixture;
+  private isReplaying = false;
+
+  // UI Settings
   private activeScreen: "menu" | "game" | "settings" = "menu";
   private currentDifficulty: "calm" | "standard" | "abyss" = "standard";
-
-  public getActiveScreen(): "menu" | "game" | "settings" {
-    return this.activeScreen;
-  }
-
-  public getCurrentDifficulty(): "calm" | "standard" | "abyss" {
-    return this.currentDifficulty;
-  }
 
   constructor(config: GameConfig) {
     this.config = config;
@@ -42,14 +50,63 @@ export class GameApp {
     
     this.renderer = new CanvasRenderer(this.canvas);
     this.debugOverlay = new DebugOverlay();
+    this.inputManager = new InputManager();
 
+    this.movementSystem = new MovementSystem();
+    this.cameraSystem = new CameraSystem();
+    this.rng = new MulberryRandom(12345); // Seeded RNG
+    this.replayFixture = new ReplayFixture();
+
+    this.resetGameState();
     this.initUI();
     this.setupResize();
+    this.setupVisibilityChange();
     this.resize();
   }
 
+  private resetGameState(): void {
+    this.gameState = {
+      tick: 0,
+      elapsedSeconds: 0,
+      status: "ready",
+      player: {
+        position: Vec2.create(0, 0),
+        previousPosition: Vec2.create(0, 0),
+        velocity: Vec2.create(0, 0),
+        currentMass: 10,
+        targetMass: 10,
+        invulnerabilitySeconds: 0,
+        blob: { points: [], velocities: [] },
+        equippedTraitId: null
+      },
+      camera: {
+        position: Vec2.create(0, 0),
+        previousPosition: Vec2.create(0, 0),
+        velocity: Vec2.create(0, 0),
+        zoom: 1.0,
+        zoomVelocity: 0.0,
+        targetZoom: 1.0,
+        transition: {
+          active: false,
+          fromStageIndex: 0,
+          toStageIndex: 0,
+          elapsed: 0,
+          progress: 0
+        }
+      },
+      stage: {
+        currentStageIndex: 0,
+        currentStageId: this.config.stages[0]?.id || "light-dust",
+        stageProgress: 0
+      },
+      entities: { activeCount: 0 },
+      particles: { activeCount: 0 },
+      run: { elapsedSeconds: 0, memoryShardsEarned: 0 },
+      events: { events: [] }
+    };
+  }
+
   private initUI(): void {
-    // Menu navigation
     const btnStart = document.getElementById("btn-start");
     const btnSettings = document.getElementById("btn-settings");
     const btnSettingsBack = document.getElementById("btn-settings-back");
@@ -88,12 +145,39 @@ export class GameApp {
     window.addEventListener("resize", () => this.resize());
   }
 
+  private setupVisibilityChange(): void {
+    // Reset timer accumulator on visibility resume to avoid framerate spiral of death/jump
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        if (this.isRunning) {
+          this.pauseGame();
+        }
+      } else {
+        // Tab resumed
+        this.previousMs = performance.now();
+        this.accumulator = 0;
+      }
+    });
+  }
+
   private resize(): void {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const width = window.innerWidth;
     const height = window.innerHeight;
     
     this.renderer.resize(width, height, dpr);
+  }
+
+  public getActiveScreen(): "menu" | "game" | "settings" {
+    return this.activeScreen;
+  }
+
+  public getCurrentDifficulty(): "calm" | "standard" | "abyss" {
+    return this.currentDifficulty;
+  }
+
+  public getGameState(): GameState {
+    return this.gameState;
   }
 
   private switchScreen(screen: "menu" | "game" | "settings"): void {
@@ -117,25 +201,29 @@ export class GameApp {
   }
 
   private startGame(): void {
+    this.resetGameState();
     this.switchScreen("game");
-    this.tickCount = 0;
     this.droppedSteps = 0;
-    this.entityCount = 0;
     this.previousMs = performance.now();
     this.accumulator = 0;
     this.isRunning = true;
+    this.gameState.status = "running";
+    this.replayFixture.clear();
     this.loop(this.previousMs);
   }
 
   private pauseGame(): void {
     this.isRunning = false;
+    this.gameState.status = "paused";
     const btnPause = document.getElementById("btn-hud-pause");
     if (btnPause) btnPause.textContent = "Resume";
   }
 
   private resumeGame(): void {
     this.previousMs = performance.now();
+    this.accumulator = 0;
     this.isRunning = true;
+    this.gameState.status = "running";
     const btnPause = document.getElementById("btn-hud-pause");
     if (btnPause) btnPause.textContent = "Pause";
     this.loop(this.previousMs);
@@ -162,7 +250,27 @@ export class GameApp {
 
     let steps = 0;
     while (this.accumulator >= STEP && steps < MAX_STEPS_PER_FRAME) {
-      this.updateSimulation(STEP);
+      // 1. Query input snapshot
+      const inputSnapshot = this.inputManager.getSnapshot();
+      
+      // Record if playing active game
+      if (!this.isReplaying) {
+        this.replayFixture.record(this.gameState.tick, inputSnapshot);
+      }
+
+      const context: UpdateContext = {
+        dt: STEP,
+        input: inputSnapshot,
+        config: this.config,
+        gameplayRandom: this.rng
+      };
+
+      // 2. Perform fixed physics simulation step
+      this.updateSimulation(context);
+
+      // Reset edge-triggered one-shot buttons
+      this.inputManager.resetOneShots();
+
       this.accumulator -= STEP;
       steps += 1;
     }
@@ -175,40 +283,81 @@ export class GameApp {
     const alpha = this.accumulator / STEP;
     this.render(alpha);
 
-    // Update debug panel metrics
+    // Update diagnostic stats panel
     const fps = Math.round(1 / (frameDelta || 0.016));
     this.debugOverlay.update({
       fps,
-      entities: this.entityCount,
+      entities: this.gameState.entities.activeCount,
       droppedSteps: this.droppedSteps
     });
 
     this.animationFrameId = requestAnimationFrame(this.loop);
   };
 
-  private updateSimulation(_dt: number): void {
-    this.tickCount++;
-    // In Goal 01, simulation does not update active entities yet.
-    // However, we increment simulation step.
+  private updateSimulation(context: UpdateContext): void {
+    this.gameState.tick++;
+    this.gameState.elapsedSeconds += context.dt;
+
+    // Run movement and camera spring physics systems
+    this.movementSystem.update(this.gameState, context);
+    this.cameraSystem.update(this.gameState, context);
+
+    // Sync HTML HUD text labels
     const hudMass = document.getElementById("hud-mass-value");
     if (hudMass) {
-      hudMass.textContent = "1.0";
+      hudMass.textContent = this.gameState.player.currentMass.toFixed(1);
     }
     const hudStage = document.getElementById("hud-stage-name");
     if (hudStage) {
-      const firstStageName = this.config.stages[0]?.nameKo || "빛가루";
-      hudStage.textContent = firstStageName;
+      const activeStage = this.config.stages[this.gameState.stage.currentStageIndex];
+      hudStage.textContent = activeStage ? activeStage.nameKo : "-";
     }
   }
 
   private render(alpha: number): void {
-    // Passes interpolation factor alpha to rendering subsystem
-    const activeStage = this.config.stages[0];
+    // Interlaced render states (interpolating player/camera between physics ticks)
+    const playerPos = Vec2.lerp(this.gameState.player.previousPosition, this.gameState.player.position, alpha);
+    const cameraPos = Vec2.lerp(this.gameState.camera.previousPosition, this.gameState.camera.position, alpha);
+
+    const activeStage = this.config.stages[this.gameState.stage.currentStageIndex];
+
     this.renderer.render({
       alpha,
       stageNameKo: activeStage?.nameKo || "빛가루",
-      stageNameEn: activeStage?.nameEn || "Light Dust"
+      stageNameEn: activeStage?.nameEn || "Light Dust",
+      player: {
+        position: playerPos,
+        mass: this.gameState.player.currentMass
+      },
+      camera: {
+        position: cameraPos,
+        zoom: this.gameState.camera.zoom
+      }
     });
+  }
+
+  // Headless simulation for deterministic test suites
+  public runSimulationSteps(inputs: readonly { tick: number; input: InputSnapshot }[]): void {
+    this.isReplaying = true;
+    this.resetGameState();
+    
+    const hz = this.config.simulation?.fixedHz || 60;
+    const STEP = 1 / hz;
+
+    for (const frame of inputs) {
+      const context: UpdateContext = {
+        dt: STEP,
+        input: frame.input,
+        config: this.config,
+        gameplayRandom: this.rng
+      };
+      this.updateSimulation(context);
+    }
+    this.isReplaying = false;
+  }
+
+  public getReplayFixture(): ReplayFixture {
+    return this.replayFixture;
   }
 
   public destroy(): void {
@@ -216,6 +365,6 @@ export class GameApp {
     if (this.animationFrameId) {
       cancelAnimationFrame(this.animationFrameId);
     }
-    // Clean event listeners if hot reload
+    this.inputManager.destroy();
   }
 }
