@@ -19,20 +19,75 @@ const mockConfig: GameConfig = {
     maxScreenSpeed: 260,
     accelerationResponseSeconds: 0.3,
     coastToTenPercentSeconds: 0.8,
-    cameraLookAheadFraction: 0.06
+    cameraLookAheadFraction: 0.06,
   },
-  relationship: { edibleEnterRatio: 0.9, edibleExitRatio: 0.95, threatEnterRatio: 1.1, threatExitRatio: 1.05 },
-  absorption: { magnetRadiusMultiplier: 1.85, commonEfficiency: 0.85, creatureEfficiency: 0.7, fragmentEfficiency: 0.5, growthResponse: 6.0, mergeDurationMin: 0.18, mergeDurationMax: 0.42 },
-  damage: { massFraction: 0.2, invulnerabilitySeconds: 1.0, recoverableMassMinFraction: 0.2, recoverableMassMaxFraction: 0.4 },
-  camera: { targetScreenFraction: 0.05, triggerScreenFraction: 0.08, deathScreenFraction: 0.02, springStiffness: 40, springDamping: 12, transitionMaxSeconds: 1.0, retriggerCooldownSeconds: 0.2 },
-  blob: { pointsLow: 16, pointsMedium: 20, pointsHigh: 24, spring: 58, damping: 10.5, neighborTension: 24, minOffset: -0.07, maxOffset: 0.09 },
-  world: { prewarmRadiusMultiplier: 1.2, cullRadiusMultiplier: 1.5, spawnInnerMultiplier: 0.8, spawnOuterMultiplier: 1.2, originRebaseThreshold: 10000, maxParticlesLow: 200, maxParticlesHigh: 500 },
-  progression: { voluntaryEfficiency: 1.0, deathEfficiency: 0.5, difficultyMultiplier: { calm: 0.8, standard: 1.0, abyss: 1.5 } },
+  relationship: {
+    edibleEnterRatio: 0.9,
+    edibleExitRatio: 0.95,
+    threatEnterRatio: 1.1,
+    threatExitRatio: 1.05,
+  },
+  absorption: {
+    magnetRadiusMultiplier: 1.85,
+    commonEfficiency: 0.85,
+    creatureEfficiency: 0.7,
+    fragmentEfficiency: 0.5,
+    growthResponse: 6.0,
+    mergeDurationMin: 0.18,
+    mergeDurationMax: 0.42,
+  },
+  damage: {
+    massFraction: 0.2,
+    invulnerabilitySeconds: 1.0,
+    recoverableMassMinFraction: 0.2,
+    recoverableMassMaxFraction: 0.4,
+  },
+  camera: {
+    targetScreenFraction: 0.05,
+    triggerScreenFraction: 0.08,
+    deathScreenFraction: 0.02,
+    springStiffness: 40,
+    springDamping: 12,
+    transitionMaxSeconds: 1.0,
+    retriggerCooldownSeconds: 0.2,
+  },
+  blob: {
+    pointsLow: 16,
+    pointsMedium: 20,
+    pointsHigh: 24,
+    spring: 58,
+    damping: 10.5,
+    neighborTension: 24,
+    minOffset: -0.07,
+    maxOffset: 0.09,
+  },
+  world: {
+    prewarmRadiusMultiplier: 1.2,
+    cullRadiusMultiplier: 1.5,
+    spawnInnerMultiplier: 0.8,
+    spawnOuterMultiplier: 1.2,
+    originRebaseThreshold: 10000,
+    maxParticlesLow: 200,
+    maxParticlesHigh: 500,
+  },
+  progression: {
+    voluntaryEfficiency: 1.0,
+    deathEfficiency: 0.5,
+    difficultyMultiplier: { calm: 0.8, standard: 1.0, abyss: 1.5 },
+  },
   stages: [
-    { id: "light-dust", index: 0, nameKo: "빛가루", nameEn: "Light Dust", background: "void-dust", audioStem: ["base"], threatBudget: 0.2 }
+    {
+      id: "light-dust",
+      index: 0,
+      nameKo: "빛가루",
+      nameEn: "Light Dust",
+      background: "void-dust",
+      audioStem: ["base"],
+      threatBudget: 0.2,
+    },
   ],
   enemies: [],
-  traits: []
+  traits: [],
 };
 
 // Create a clean transient test state
@@ -49,7 +104,7 @@ function createTestState(): GameState {
       targetMass: 15,
       invulnerabilitySeconds: 0,
       blob: { points: [], velocities: [] },
-      equippedTraitId: null
+      equippedTraitId: null,
     },
     camera: {
       position: Vec2.create(0, 0),
@@ -58,13 +113,13 @@ function createTestState(): GameState {
       zoom: 1.0,
       zoomVelocity: 0.0,
       targetZoom: 1.0,
-      transition: { active: false, fromStageIndex: 0, toStageIndex: 0, elapsed: 0, progress: 0 }
+      transition: { active: false, fromStageIndex: 0, toStageIndex: 0, elapsed: 0, progress: 0 },
     },
     stage: { currentStageIndex: 0, currentStageId: "light-dust", stageProgress: 0 },
     entities: { activeCount: 0, motes: [] },
     particles: { activeCount: 0 },
     run: { elapsedSeconds: 0, memoryShardsEarned: 0 },
-    events: { events: [] }
+    events: { events: [] },
   };
 }
 
@@ -75,7 +130,7 @@ describe("Movement Framerate Independence", () => {
       moveMagnitude: 1.0,
       pausePressed: false,
       settlePressed: false,
-      inputMethod: "keyboard"
+      inputMethod: "keyboard",
     };
 
     const runSim = (hz: number): Vec2 => {
@@ -89,7 +144,7 @@ describe("Movement Framerate Independence", () => {
           dt,
           input,
           config: mockConfig,
-          gameplayRandom: new MulberryRandom(42)
+          gameplayRandom: new MulberryRandom(42),
         };
         movementSystem.update(state, context);
       }
@@ -119,7 +174,7 @@ describe("Deterministic Simulation Replay", () => {
         moveMagnitude: mag,
         pausePressed: false,
         settlePressed: false,
-        inputMethod: "keyboard"
+        inputMethod: "keyboard",
       };
     });
 
@@ -134,7 +189,7 @@ describe("Deterministic Simulation Replay", () => {
           dt,
           input,
           config: mockConfig,
-          gameplayRandom: new MulberryRandom(42)
+          gameplayRandom: new MulberryRandom(42),
         };
         movementSystem.update(state, context);
         cameraSystem.update(state, context);
@@ -161,9 +216,15 @@ describe("Camera Spring Convergence", () => {
     const cameraSystem = new CameraSystem();
     const context: UpdateContext = {
       dt: 1 / 60,
-      input: { move: Vec2.create(0, 0), moveMagnitude: 0, pausePressed: false, settlePressed: false, inputMethod: "keyboard" },
+      input: {
+        move: Vec2.create(0, 0),
+        moveMagnitude: 0,
+        pausePressed: false,
+        settlePressed: false,
+        inputMethod: "keyboard",
+      },
       config: mockConfig,
-      gameplayRandom: new MulberryRandom(42)
+      gameplayRandom: new MulberryRandom(42),
     };
 
     for (let i = 0; i < 180; i++) {
@@ -179,22 +240,28 @@ describe("Absorption & Mass Conservation", () => {
   it("should conserve mass after consuming motes with efficiency multiplier", () => {
     const state = createTestState();
     const pool = new MotePool(10);
-    
+
     // Spawn 3 motes inside player reach
     const mote1 = pool.spawn(2, 2, 2.0);
     const mote2 = pool.spawn(-3, 1, 1.5);
     const mote3 = pool.spawn(1, -2, 3.0);
-    
+
     state.entities.motes.push(mote1, mote2, mote3);
 
     const absorptionSystem = new AbsorptionSystem();
     const growthSystem = new GrowthSystem();
-    
+
     const context: UpdateContext = {
       dt: 1 / 60,
-      input: { move: Vec2.create(0, 0), moveMagnitude: 0, pausePressed: false, settlePressed: false, inputMethod: "keyboard" },
+      input: {
+        move: Vec2.create(0, 0),
+        moveMagnitude: 0,
+        pausePressed: false,
+        settlePressed: false,
+        inputMethod: "keyboard",
+      },
       config: mockConfig,
-      gameplayRandom: new MulberryRandom(123)
+      gameplayRandom: new MulberryRandom(123),
     };
 
     // Run for 3 seconds to let magnetism, merge, and growth settle
@@ -204,7 +271,7 @@ describe("Absorption & Mass Conservation", () => {
     }
 
     // All motes must be consumed
-    expect(state.entities.motes.every(m => m.state === "consumed")).toBe(true);
+    expect(state.entities.motes.every((m) => m.state === "consumed")).toBe(true);
 
     // Expected Mass: initial (15) + sum(moteMass * commonEfficiency)
     // 15 + (2.0 + 1.5 + 3.0) * 0.85 = 15 + 6.5 * 0.85 = 15 + 5.525 = 20.525
@@ -216,12 +283,18 @@ describe("Blob Rest State Convergence", () => {
   it("should return the deformed perimeter points back to round rest circles over time", () => {
     const state = createTestState();
     const blobSystem = new BlobSystem();
-    
+
     const context: UpdateContext = {
       dt: 1 / 60,
-      input: { move: Vec2.create(0, 0), moveMagnitude: 0, pausePressed: false, settlePressed: false, inputMethod: "keyboard" },
+      input: {
+        move: Vec2.create(0, 0),
+        moveMagnitude: 0,
+        pausePressed: false,
+        settlePressed: false,
+        inputMethod: "keyboard",
+      },
       config: mockConfig,
-      gameplayRandom: new MulberryRandom(42)
+      gameplayRandom: new MulberryRandom(42),
     };
 
     // Run once to initialize points
@@ -251,9 +324,9 @@ describe("Blob Rest State Convergence", () => {
 describe("Audio Manager Rate Limiting", () => {
   it("should prevent noise overlap by enforcing minimum playback time intervals", () => {
     const audio = new AudioManager();
-    
+
     // Mock audio context to pass guards
-    (audio as any).ctx = {
+    (audio as unknown as { ctx: AudioContext }).ctx = {
       state: "running",
       currentTime: 0,
       createOscillator: () => ({
@@ -261,18 +334,18 @@ describe("Audio Manager Rate Limiting", () => {
         frequency: { setValueAtTime: () => {}, exponentialRampToValueAtTime: () => {} },
         connect: () => {},
         start: () => {},
-        stop: () => {}
+        stop: () => {},
       }),
       createGain: () => ({
         gain: { setValueAtTime: () => {}, exponentialRampToValueAtTime: () => {} },
-        connect: () => {}
+        connect: () => {},
       }),
-      destination: {}
-    };
+      destination: {},
+    } as unknown as AudioContext;
 
     // Fake performance.now() to control test time increments
     const timeSpy = vi.spyOn(performance, "now");
-    
+
     timeSpy.mockReturnValue(1000);
     expect(audio.canPlaySound()).toBe(true);
     audio.handleEvent({ type: "absorption-started", sourceId: 1, ratio: 0.1 });
