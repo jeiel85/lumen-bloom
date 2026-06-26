@@ -14,7 +14,7 @@
 [![Playwright](https://img.shields.io/badge/Playwright-1.49-2EAD33?style=flat-square&logo=playwright&logoColor=white)](https://playwright.dev/)
 [![License](https://img.shields.io/badge/License-Reserved-c0392b?style=flat-square)](LICENSE)
 
-[**🌐 Landing Page**](landing.html) &nbsp;·&nbsp; [**📖 Game Design**](docs/02_GAME_DESIGN_DOCUMENT.md) &nbsp;·&nbsp; [**⚙ Architecture**](docs/03_TECHNICAL_ARCHITECTURE.md) &nbsp;·&nbsp; [**🗺 Roadmap**](#implementation-roadmap)
+[**🌐 Live Site**](https://jeiel85.github.io/lumen-bloom/) &nbsp;·&nbsp; [**▶ Play**](https://jeiel85.github.io/lumen-bloom/play.html) &nbsp;·&nbsp; [**📖 Game Design**](docs/02_GAME_DESIGN_DOCUMENT.md) &nbsp;·&nbsp; [**⚙ Architecture**](docs/03_TECHNICAL_ARCHITECTURE.md) &nbsp;·&nbsp; [**🗺 Roadmap**](#implementation-roadmap)
 
 </div>
 
