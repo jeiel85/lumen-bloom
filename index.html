@@ -1,83 +1,316 @@
-<!DOCTYPE html>
-<html lang="ko">
+<!doctype html>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/landing-hero.svg" />
     <title>Lumen Bloom — 빛의 탄생</title>
-    <meta name="description" content="빛가루에서 은하까지, 무한 성장의 감성 아케이드 웹 게임 Lumen Bloom" />
+    <meta
+      name="description"
+      content="From a flicker of light dust to a Cosmic Web. An infinite-growth ambient arcade game for the web."
+    />
+    <meta property="og:title" content="Lumen Bloom — 빛의 탄생" />
+    <meta
+      property="og:description"
+      content="Evolve from light dust to cosmic web. Calm. Tactile. Infinite."
+    />
+    <meta property="og:url" content="https://jeiel85.github.io/lumen-bloom/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://jeiel85.github.io/lumen-bloom/social-card.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Lumen Bloom — 빛의 탄생" />
+    <meta
+      name="twitter:description"
+      content="Evolve from light dust to cosmic web. Calm. Tactile. Infinite."
+    />
+    <meta name="twitter:image" content="https://jeiel85.github.io/lumen-bloom/social-card.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="landing.css" />
+    <link rel="stylesheet" href="landing-sections.css" />
   </head>
   <body>
-    <div id="app-container">
-      <!-- Game Canvas Shell -->
-      <canvas id="game-canvas"></canvas>
+    <!-- ─── Nav ─── -->
+    <nav>
+      <a href="#" class="nav-logo">Lumen Bloom <span>빛의 탄생</span></a>
+      <div class="nav-actions">
+        <a
+          href="https://github.com/jeiel85/lumen-bloom"
+          class="btn-outline"
+          target="_blank"
+          rel="noopener"
+          >GitHub</a
+        >
+        <a href="play.html" class="btn-play">▶ Play Game</a>
+      </div>
+    </nav>
 
-      <!-- Semantic Main Menu Overlay -->
-      <main id="main-menu" class="overlay-screen active">
-        <div class="menu-content">
-          <header class="menu-header">
-            <h1 class="game-title">Lumen Bloom</h1>
-            <p class="game-subtitle">빛의 탄생</p>
-          </header>
-
-          <nav class="menu-actions">
-            <button id="btn-start" class="menu-btn primary">시작하기 (Start)</button>
-            <button id="btn-settings" class="menu-btn secondary">설정 (Settings)</button>
-          </nav>
+    <!-- ─── Hero ─── -->
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow">Ambient arcade · Infinite growth</span>
+        <h1 class="hero-title"><span>Lumen</span><span>Bloom</span></h1>
+        <p class="hero-korean">빛의 탄생</p>
+        <p class="hero-tagline">
+          Drift from a fragile spark into a living cosmic web. Absorb motes, bend around danger, and
+          watch the world bloom with every stage.
+        </p>
+        <div class="hero-actions">
+          <a href="play.html" class="btn-play">▶ Play in Browser</a>
+          <a
+            href="https://github.com/jeiel85/lumen-bloom"
+            class="btn-outline"
+            target="_blank"
+            rel="noopener"
+            >View Source</a
+          >
         </div>
-      </main>
-
-      <!-- HUD view -->
-      <div id="hud-overlay" class="hud-container hidden">
-        <div class="hud-left">
-          <div class="hud-metric">
-            <span class="hud-label">Mass:</span>
-            <span id="hud-mass-value" class="hud-value">1.0</span>
-          </div>
-          <div class="hud-metric">
-            <span class="hud-label">Stage:</span>
-            <span id="hud-stage-name" class="hud-value">-</span>
-          </div>
-        </div>
-        <div class="hud-right">
-          <button id="btn-hud-pause" class="hud-btn" aria-label="일시정지">Pause</button>
+        <div class="hero-badges">
+          <span class="badge">Free to Play</span>
+          <span class="badge">No Login Required</span>
+          <span class="badge">Works Offline</span>
+          <span class="badge">No Ads</span>
+          <span class="badge">Open Source</span>
         </div>
       </div>
+      <div class="hero-visual" aria-label="Lumen Bloom stage artwork">
+        <div class="stat-card one"><strong>8</strong><span>evolution stages</span></div>
+        <div class="hero-banner">
+          <img
+            src="/landing-hero.svg"
+            alt="Lumen Bloom — Evolution from Light Dust to Cosmic Web"
+            loading="eager"
+          />
+        </div>
+        <div class="stat-card two"><strong>60Hz</strong><span>fixed-step feel</span></div>
+      </div>
+    </section>
 
-      <!-- Settings Overlay -->
-      <section id="settings-menu" class="overlay-screen hidden">
-        <div class="menu-content">
-          <h2>설정 (Settings)</h2>
-          <div class="settings-group">
-            <label for="select-difficulty">난이도 (Difficulty)</label>
-            <select id="select-difficulty">
-              <option value="calm">평온 (Calm)</option>
-              <option value="standard" selected>일반 (Standard)</option>
-              <option value="abyss">심연 (Abyss)</option>
-            </select>
+    <!-- ─── Evolution Stages ─── -->
+    <section class="evolution">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-label">Your Journey</span>
+          <h2 class="section-title">Eight Stages of Evolution</h2>
+          <p class="section-sub">
+            Each stage transforms your appearance, sound, and relationship with the world around
+            you.
+          </p>
+        </div>
+        <div class="stages-grid">
+          <div class="stage-card" style="--sc: #c8d8ff">
+            <div class="stage-orb"></div>
+            <div class="stage-num">Stage 01</div>
+            <div class="stage-name">Light Dust</div>
+            <div class="stage-arc">Fragile</div>
+            <div class="stage-desc">
+              A barely-there speck. The world feels vast and dangerous. Even a brush with a larger
+              entity threatens your existence.
+            </div>
           </div>
-          <div class="settings-group">
-            <label for="select-quality">품질 (Quality)</label>
-            <select id="select-quality">
-              <option value="low">낮음 (Low)</option>
-              <option value="medium" selected>중간 (Medium)</option>
-              <option value="high">높음 (High)</option>
-            </select>
+
+          <div class="stage-card" style="--sc: #00e8ff">
+            <div class="stage-orb"></div>
+            <div class="stage-num">Stage 02</div>
+            <div class="stage-name">Droplet</div>
+            <div class="stage-arc">Curious</div>
+            <div class="stage-desc">
+              Gaining cohesion and confidence. Magnetism pulls nearby motes toward you. The world is
+              beginning to respond.
+            </div>
           </div>
-          <div class="menu-actions">
-            <button id="btn-settings-back" class="menu-btn secondary">뒤로가기 (Back)</button>
+
+          <div class="stage-card" style="--sc: #00ffd0">
+            <div class="stage-orb"></div>
+            <div class="stage-num">Stage 03</div>
+            <div class="stage-name">Ripple</div>
+            <div class="stage-arc">Rhythmic</div>
+            <div class="stage-desc">
+              Rings radiate as you move. Your blob perimeter begins to deform visibly with each
+              absorption event.
+            </div>
+          </div>
+
+          <div class="stage-card" style="--sc: #0088ff">
+            <div class="stage-orb"></div>
+            <div class="stage-num">Stage 04</div>
+            <div class="stage-name">Moonlit Lake</div>
+            <div class="stage-arc">Serene</div>
+            <div class="stage-desc">
+              Reflective and calm. The camera has zoomed out enough to reveal the full
+              neighbourhood. You belong here.
+            </div>
+          </div>
+
+          <div class="stage-card" style="--sc: #ffe866">
+            <div class="stage-orb"></div>
+            <div class="stage-num">Stage 05</div>
+            <div class="stage-name">Star</div>
+            <div class="stage-arc">Radiant</div>
+            <div class="stage-desc">
+              Warmth and light emanate from you. Smaller entities orbit. A warm procedural
+              soundscape wraps the world.
+            </div>
+          </div>
+
+          <div class="stage-card" style="--sc: #c050ff">
+            <div class="stage-orb"></div>
+            <div class="stage-num">Stage 06</div>
+            <div class="stage-name">Nebula</div>
+            <div class="stage-arc">Expansive</div>
+            <div class="stage-desc">
+              Edges blur into colour. You're becoming something larger than a single point — a
+              region, not an entity.
+            </div>
+          </div>
+
+          <div class="stage-card" style="--sc: #7040e0">
+            <div class="stage-orb"></div>
+            <div class="stage-num">Stage 07</div>
+            <div class="stage-name">Galaxy</div>
+            <div class="stage-arc">Sovereign</div>
+            <div class="stage-desc">
+              Spiral arms extend. The camera reveals a breathtaking scale. You've become a world
+              unto yourself.
+            </div>
+          </div>
+
+          <div class="stage-card" style="--sc: #40d0ff">
+            <div
+              class="stage-orb"
+              style="
+                background: linear-gradient(135deg, #40d0ff, #d040c0);
+                box-shadow: 0 0 20px #40d0ff;
+              "
+            ></div>
+            <div class="stage-num">Stage 08</div>
+            <div class="stage-name">Cosmic Web</div>
+            <div class="stage-arc">Sublime</div>
+            <div class="stage-desc">
+              The final form. Threads of connection span the universe. You are no longer a point —
+              you are everywhere at once.
+            </div>
           </div>
         </div>
-      </section>
-
-      <!-- DOM Debug Overlay -->
-      <div id="debug-overlay" class="debug-container">
-        <div class="debug-row">FPS: <span id="debug-fps">0</span></div>
-        <div class="debug-row">Entities: <span id="debug-entities">0</span></div>
-        <div class="debug-row">Steps Dropped: <span id="debug-dropped">0</span></div>
       </div>
-    </div>
-    <!-- Entry point script, no inline JS -->
-    <script type="module" src="/src/app/bootstrap.ts"></script>
+    </section>
+
+    <!-- ─── Features ─── -->
+    <section>
+      <div class="container">
+        <div class="section-header">
+          <span class="section-label">What Makes It Different</span>
+          <h2 class="section-title">Built for Wonder</h2>
+          <p class="section-sub">
+            Every technical choice serves the feel — calm, tactile, and alive.
+          </p>
+        </div>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">◎</div>
+            <div class="feature-title">Organic Blob Physics</div>
+            <div class="feature-desc">
+              Your entity is a closed perimeter of spring-connected points. It deforms as you absorb
+              motes, collide, and navigate — not a rigid circle, but a living mass.
+            </div>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">♬</div>
+            <div class="feature-title">Procedural Soundscape</div>
+            <div class="feature-desc">
+              No audio files. Ambient music is synthesised live via the Web Audio API — sine sweeps,
+              harmonic layers, and absorption chimes that evolve with your stage.
+            </div>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <div class="feature-title">60 Hz Fixed-Timestep ECS</div>
+            <div class="feature-desc">
+              Deterministic physics at 60 Hz, decoupled from rendering. Consistent across every
+              device and refresh rate, with full replay support for testing.
+            </div>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">📴</div>
+            <div class="feature-title">Offline-First PWA</div>
+            <div class="feature-desc">
+              After the first load, Lumen Bloom runs without a network connection. No account. No
+              telemetry. No advertisements. Ever. Just the game.
+            </div>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">⚙</div>
+            <div class="feature-title">JSON-Driven Balance</div>
+            <div class="feature-desc">
+              All physics constants, stage thresholds, and enemy behaviour live in config files —
+              not hard-coded. Tune the feel without touching source code.
+            </div>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">⌨</div>
+            <div class="feature-title">All Input Modes</div>
+            <div class="feature-desc">
+              Keyboard, mouse, and touch are all first-class citizens. Automatic priority
+              arbitration ensures the best input device always wins.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── CTA ─── -->
+    <section class="cta">
+      <div class="container">
+        <div class="cta-panel">
+          <h2 class="cta-title">Begin Your <span>Bloom</span></h2>
+          <p class="cta-sub">No download. No account. Just open a tab and start growing.</p>
+          <a href="play.html" class="btn-play" style="font-size: 1.1rem; padding: 0.8rem 2.4rem"
+            >▶ Play Free in Browser</a
+          >
+          <div class="cta-meta">
+            <span>No account required</span>
+            <span>Works offline after first load</span>
+            <span>Keyboard · Mouse · Touch</span>
+            <span>No ads, no tracking</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── Footer ─── -->
+    <footer>
+      <span>© 2026 Lumen Bloom · 빛의 탄생</span>
+      <div class="footer-links">
+        <a href="https://github.com/jeiel85/lumen-bloom" target="_blank" rel="noopener">GitHub</a>
+        <a
+          href="https://github.com/jeiel85/lumen-bloom/blob/main/docs/02_GAME_DESIGN_DOCUMENT.md"
+          target="_blank"
+          rel="noopener"
+          >Game Design</a
+        >
+        <a
+          href="https://github.com/jeiel85/lumen-bloom/blob/main/docs/03_TECHNICAL_ARCHITECTURE.md"
+          target="_blank"
+          rel="noopener"
+          >Architecture</a
+        >
+        <a
+          href="https://github.com/jeiel85/lumen-bloom/blob/main/LICENSE"
+          target="_blank"
+          rel="noopener"
+          >License</a
+        >
+      </div>
+    </footer>
   </body>
 </html>

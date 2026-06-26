@@ -1,9 +1,21 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Lumen Bloom Bootstrap Smoke Test", () => {
-  test("should render the home screen with canvas and UI elements", async ({ page }) => {
-    // Go to development server
+test.describe("Landing Page", () => {
+  test("home page renders and links to the game", async ({ page }) => {
     await page.goto("/");
+
+    await expect(page).toHaveTitle("Lumen Bloom — 빛의 탄생");
+
+    // The primary call-to-action should point at the playable game.
+    const playLink = page.locator("a.btn-play").first();
+    await expect(playLink).toHaveAttribute("href", "play.html");
+  });
+});
+
+test.describe("Lumen Bloom Bootstrap Smoke Test", () => {
+  test("should render the game screen with canvas and UI elements", async ({ page }) => {
+    // The game lives at /play.html; the site root is the landing page.
+    await page.goto("/play.html");
 
     // Check title
     await expect(page).toHaveTitle("Lumen Bloom — 빛의 탄생");

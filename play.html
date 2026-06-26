@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/landing-hero.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>Lumen Bloom — 빛의 탄생</title>
+    <meta name="description" content="빛가루에서 은하까지, 무한 성장의 감성 아케이드 웹 게임 Lumen Bloom" />
+  </head>
+  <body>
+    <div id="app-container">
+      <!-- Game Canvas Shell -->
+      <canvas id="game-canvas"></canvas>
+
+      <!-- Semantic Main Menu Overlay -->
+      <main id="main-menu" class="overlay-screen active">
+        <div class="menu-content">
+          <header class="menu-header">
+            <h1 class="game-title">Lumen Bloom</h1>
+            <p class="game-subtitle">빛의 탄생</p>
+          </header>
+
+          <nav class="menu-actions">
+            <button id="btn-start" class="menu-btn primary">시작하기 (Start)</button>
+            <button id="btn-settings" class="menu-btn secondary">설정 (Settings)</button>
+          </nav>
+        </div>
+      </main>
+
+      <!-- HUD view -->
+      <div id="hud-overlay" class="hud-container hidden">
+        <div class="hud-left">
+          <div class="hud-metric">
+            <span class="hud-label">Mass:</span>
+            <span id="hud-mass-value" class="hud-value">1.0</span>
+          </div>
+          <div class="hud-metric">
+            <span class="hud-label">Stage:</span>
+            <span id="hud-stage-name" class="hud-value">-</span>
+          </div>
+        </div>
+        <div class="hud-right">
+          <button id="btn-hud-pause" class="hud-btn" aria-label="일시정지">Pause</button>
+        </div>
+      </div>
+
+      <!-- Settings Overlay -->
+      <section id="settings-menu" class="overlay-screen hidden">
+        <div class="menu-content">
+          <h2>설정 (Settings)</h2>
+          <div class="settings-group">
+            <label for="select-difficulty">난이도 (Difficulty)</label>
+            <select id="select-difficulty">
+              <option value="calm">평온 (Calm)</option>
+              <option value="standard" selected>일반 (Standard)</option>
+              <option value="abyss">심연 (Abyss)</option>
+            </select>
+          </div>
+          <div class="settings-group">
+            <label for="select-quality">품질 (Quality)</label>
+            <select id="select-quality">
+              <option value="low">낮음 (Low)</option>
+              <option value="medium" selected>중간 (Medium)</option>
+              <option value="high">높음 (High)</option>
+            </select>
+          </div>
+          <div class="menu-actions">
+            <button id="btn-settings-back" class="menu-btn secondary">뒤로가기 (Back)</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- DOM Debug Overlay -->
+      <div id="debug-overlay" class="debug-container">
+        <div class="debug-row">FPS: <span id="debug-fps">0</span></div>
+        <div class="debug-row">Entities: <span id="debug-entities">0</span></div>
+        <div class="debug-row">Steps Dropped: <span id="debug-dropped">0</span></div>
+      </div>
+    </div>
+    <!-- Entry point script, no inline JS -->
+    <script type="module" src="/src/app/bootstrap.ts"></script>
+  </body>
+</html>
