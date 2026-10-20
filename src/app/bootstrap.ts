@@ -1,4 +1,5 @@
 import "../index.css";
+import "../pwa/registerServiceWorker";
 import { loadConfig } from "../config/loadConfig";
 import { GameApp } from "./GameApp";
 
